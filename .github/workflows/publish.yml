@@ -15,16 +15,16 @@ jobs:
         include:
           - name: linux
             os: ubuntu-latest
-            artifact_name: ${{ env.PROJECT_NAME }}
-            asset_name: ${{ env.PROJECT_NAME }}-linux
+            artifact_name: pluralizer-cli
+            asset_name: pluralizer-cli-linux
           - name: windows
             os: windows-latest
-            artifact_name: ${{ env.PROJECT_NAME }}.exe
-            asset_name: ${{ env.PROJECT_NAME }}-windows
+            artifact_name: pluralizer-cli.exe
+            asset_name: pluralizer-cli-windows
           - name: macos
             os: macos-latest
-            artifact_name: ${{ env.PROJECT_NAME }}
-            asset_name: ${{ env.PROJECT_NAME }}-macos
+            artifact_name: pluralizer-cli
+            asset_name: pluralizer-cli-macos
 
     steps:
     - uses: actions/checkout@v1

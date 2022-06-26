@@ -1,64 +1,66 @@
-extern crate clap;
-extern crate serde;
-extern crate serde_derive;
-extern crate serde_json;
+use std::{env, io};
+use std::io::BufRead;
 
-use clap::{Parser, Subcommand};
-use reqwest::Response;
+use pluralizer::pluralize;
 
-#[tokio::main]
-async fn main() -> Result<(), reqwest::Error> {
-    let cli: Cli = Cli::parse();
-    match &cli.command {
-        Command::Add { name, r#type } => {
-            println!("type: {}, name: {}", r#type, name);
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+const NAME: &str = env!("CARGO_PKG_NAME");
+
+fn usage() {
+    eprintln!("\nusage: pluralize-cli [-p, --plural] [-s, --singular] [-v, --version] [WORD]\n");
+}
+
+fn version() {
+    println!("{} {}", NAME, VERSION);
+}
+
+fn pluralize_word(word: &str, count: isize) {
+    let pluralized_word = pluralize(word, count, false);
+    println!("{}", pluralized_word);
+}
+
+fn pluralize_input(count: isize) {
+    let stdin = io::stdin();
+    for word in stdin.lock().lines() {
+        pluralize_word(word.unwrap().as_str(), count);
+    };
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let args: Vec<String> = env::args().collect();
+
+    // 2 indicates plural, 1 indicates singular
+    let count = 2;
+
+    pluralizer::initialize();
+
+    let arg_len = args.len();
+    match arg_len {
+        1 => pluralize_input(count),
+        2 => match args[1].as_str() {
+            "-v" => version(),
+            "-s" => pluralize_input(1),
+            "-p" => pluralize_input(count),
+            _ => {
+                usage();
+                return Err("Invalid flag".into());
+            }
+        },
+        3 => {
+            let word = args[2].as_str();
+            match args[1].as_str() {
+                "-s" => pluralize_word(word, 1),
+                "-p" => pluralize_word(word, count),
+                _ => {
+                    usage();
+                    return Err("Invalid flag".into());
+                }
+            }
         }
-        Command::Info { .. } => todo!(),
-        Command::List { .. } => todo!(),
-        Command::Get { url } => {
-            let response = do_get(url).await?;
-            let status = response.status();
-            println!("Status: {}", status);
-
-            eprintln!("Headers: {:#?}\n", response.headers());
-
-            let body = response.text().await?;
-            println!("body={:?}", body);
+        _ => {
+            usage();
+            return Err("Too many arguments".into());
         }
     }
     Ok(())
-}
-
-async fn do_get(url: &String) -> reqwest::Result<Response> {
-    reqwest::get(url).await
-}
-
-#[derive(Subcommand)]
-enum Command {
-    #[clap(alias = "a", about = "Add a component")]
-    Add {
-        #[clap()]
-        /// The type of component. Valid values are: alias, func, secret, or tool
-        r#type: String,
-
-        /// The name of the component
-        name: String,
-    },
-
-    #[clap(alias = "g", about = "Get a URL")]
-    Get {
-        url: String
-    },
-
-    #[clap(alias = "i", about = "Get information about a component")]
-    Info { name: String },
-    #[clap(alias = "l", about = "List all components")]
-    List { name: String },
-}
-
-#[derive(Parser)]
-#[clap(version, author, about)]
-struct Cli {
-    #[clap(subcommand)]
-    command: Command,
 }
