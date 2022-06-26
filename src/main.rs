@@ -7,7 +7,13 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 const NAME: &str = env!("CARGO_PKG_NAME");
 
 fn usage() {
-    eprintln!("\nusage: pluralize-cli [-p, --plural] [-s, --singular] [-v, --version] [WORD]\n");
+    let u = "usage: pluralizer-cli [-h] [-p] [-s] [-v] WORD
+  where:
+    -h Display help
+    -p Plural (default)
+    -s Singular
+    -v Display version";
+    eprintln!("{}", u);
 }
 
 fn version() {
@@ -38,6 +44,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     match arg_len {
         1 => pluralize_input(count),
         2 => match args[1].as_str() {
+            "-h" => usage(),
             "-v" => version(),
             "-s" => pluralize_input(1),
             "-p" => pluralize_input(count),

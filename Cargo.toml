@@ -1,6 +1,6 @@
 [package]
 name = "pluralizer-cli"
-version = "0.1.1"
+version = "0.1.2"
 description = "Pluralize words. Based on the excellent pluralizer library."
 authors = ["shane"]
 edition = "2021"
