@@ -1,6 +1,6 @@
 [package]
 name = "pluralizer-cli"
-version = "0.1.0"
+version = "0.1.1"
 description = "Pluralize words. Based on the excellent pluralizer library."
 authors = ["shane"]
 edition = "2021"
@@ -9,7 +9,7 @@ readme = "README.md"
 homepage = "https://github.com/digitalsanctum/pluralizer-cli"
 repository = "https://github.com/digitalsanctum/pluralizer-cli"
 keywords = ["cli", "pluralizer-cli", "tools", "pluralizer"]
-categories = ["command-line-utilities", "command-line-interface", "utilities"]
+categories = ["command-line-utilities", "command-line-interface", "text-processing"]
 
 [badges]
 maintenance = { status = "actively-developed" }
